@@ -270,7 +270,12 @@ do{
                 
                 do{
                     $monto_retiro = readline("Ingrese el monto a retirar: ");
-                    $estado_retiro = realizarRetiro($cuenta_ingr,$clientes,$monto_retiro);
+
+                    if(!is_numeric($monto_retiro)){
+                        echo "\nNo se permiten caracteres, ingrese un monto superior a 0\n";
+                        $estado_retiro = false;
+                    }else{
+                        $estado_retiro = realizarRetiro($cuenta_ingr,$clientes,$monto_retiro);
                         if($monto_retiro <= 0){
                             $saldo_negativo = true;
                             echo "\nMonto no valido, ingrese un monto superior a 0\n";
@@ -290,6 +295,9 @@ do{
                                 $retiros[] = $retiro;
                             }
                         }
+                    }
+
+                    
                 }while((!$estado_retiro && !$sin_saldo)||$saldo_negativo);
             }
             break;
@@ -364,8 +372,12 @@ do{
                 echo "No hay saldo en la cuenta\n";
             }else{
                 do{
-                    $monto_transfer = readline("Ingrese el monto a transferir: ");            
-                    $estado_transfer = realizarTransferencia($cuenta_ingr,$clientes,$monto_transfer,$cuenta_transfer);
+                    $monto_transfer = readline("Ingrese el monto a transferir: ");  
+                    if(!is_numeric($monto_transfer)){
+                        echo "\nNo se permiten caracteres, ingrese un monto superior a 0\n";
+                        $estado_transfer = false;
+                    }else{
+                        $estado_transfer = realizarTransferencia($cuenta_ingr,$clientes,$monto_transfer,$cuenta_transfer);
                         if($monto_transfer <= 0){
                             $saldo_negativo = true;
                             echo "\nMonto no valido, ingrese un monto superior a 0\n";
@@ -394,6 +406,8 @@ do{
                                 $transferencias[] = $transferencia;
                             }
                         }
+                    }      
+                        
                 }while((!$estado_transfer && !$sin_saldo)||$saldo_negativo);
             }
             break;
