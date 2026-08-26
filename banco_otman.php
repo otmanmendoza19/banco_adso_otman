@@ -1,6 +1,6 @@
 <?php
 /*
-funcion para obtener la zona horaria, no me daba la hora de colombia porque tenia Europe/Berlin
+funcion para obtener la zona horaria, no me daba la hora de colombia ya que tenia Europe/Berlin
 echo "Esto es la zona horaria" . date_default_timezone_get();
 entonces tengo que asignarle una zona, en este caso America/Bogota
 */
