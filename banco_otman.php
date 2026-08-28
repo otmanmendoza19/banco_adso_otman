@@ -1,6 +1,6 @@
 <?php
 /*
-funcion para obtener la zona horaria, no me daba la hora de colombia ya que tenia Europe/Berlin
+funcion para obtener la zona horaria, no me daba la hora de colombia porque tenia Europe/Berlin
 echo "Esto es la zona horaria" . date_default_timezone_get();
 entonces tengo que asignarle una zona, en este caso America/Bogota
 */
@@ -23,8 +23,7 @@ $retiros = [];
 //lista de registro de transferencias
 $transferencias = []; 
 
-//funcionalidades
-/*
+/* funcionalidades
 1 - Iniciar sesion
 2 - Consultar saldo
 3 - Realizar retiro (Se debe registrar el retiro)
@@ -70,15 +69,24 @@ function obtenerNombrePorCuenta($numCuenta, $listaClientes): string{
 }
 //-------------------------------------------------------------------------------
 function mostrarOpciones(){
-    echo "==============[Menu De Opciones]================\n";
+    echo "\n==============[Menu De Opciones]================\n";
     echo "1 consultar saldo\n";
     echo "2 realizar retiro\n";
     echo "3 consultar info de retiros realizados\n";
     echo "4 realizar transferencia\n";
     echo "5 consultar info de transferencias realizadas\n";
-    echo "6 salir del programa\n";
+    echo "6 cerras sesion\n";
+    echo "7 salir del programa\n";
     echo "================================================\n";
 }
+//-------------------------------------------------------------------------------
+function mostrarOpcionesSalida(){
+    echo "\n==============[Escoja una opcion]===============\n";
+    echo "1 Ingresar\n";
+    echo "2 Salir del programa\n";
+    echo "================================================\n";
+}
+
 //-----------------[Funciones de menu]--------------------------------------------
 function consultarSaldo($numCuenta,$listaClientes){
     foreach($listaClientes as $cliente){
@@ -117,7 +125,7 @@ function realizarTransferencia($numCuentaIngreso,&$listaClientes,$monto_transfer
             if($saldo_actual >= $monto_transfer){
 		        if($monto_transfer>0){
                   $cliente["saldo"] = $cliente["saldo"] - $monto_transfer;
-                  //recorriendo para sumar el monto a la cuenta a transferir
+                  //recorriendo para la sumar el monto a la cuenta a transferir
                   foreach($listaClientes as &$cTransfer){
                     if($cTransfer["numCuenta"]==$numCuentaTransfer){
                         $cTransfer["saldo"] = $cTransfer["saldo"] + $monto_transfer;
@@ -134,113 +142,141 @@ function realizarTransferencia($numCuentaIngreso,&$listaClientes,$monto_transfer
 }
 
 //------------------------------------------------------------------------------------
-function mostrarInfoGeneralRetiro($listaRetiros){
-    echo "\n=========[Info General De Retiros]============\n";
+function mostrarInfoDetalladaRetiro($listaRetiros,$userIngreso){
+    echo "\n=======[Info Detallada De Retiros]======\n";
     
     foreach($listaRetiros as $ret){
-        echo "Usuario: " . $ret["usuario"] . "\n";
-        echo "Valor retirado: " . $ret["valor_retirado"] . "\n";
-        echo "Fecha de retiro: " . $ret["fecha_retiro"];
-        echo "\n=======================================\n";
+        if($ret["usuario"] == $userIngreso){
+            echo "numero de cuenta: " . $ret["usuario"] . "\n";
+            echo "Valor retirado: " . $ret["valor_retirado"] . "\n";
+            echo "Fecha de retiro: " . $ret["fecha_retiro"];
+            echo "\n========================================\n";
+        }
     }
 }
 //-----------------------------------------------------------------------------------
 
-function mostrarInfoDetalladaRetiro($listaRetiros){
+function mostrarInfoGeneralRetiro($listaRetiros, $userIngreso){
     $numTotalRetiro = 0;
     $valorTotalRetirado = 0;
 
     foreach($listaRetiros as $retiro){
-        $numTotalRetiro++;
-        $valorTotalRetirado += $retiro["valor_retirado"];
+        if($retiro["usuario"] == $userIngreso){
+            $numTotalRetiro++;
+            $valorTotalRetirado += $retiro["valor_retirado"];
+        }
     }
-    echo "\n=========[Info Detallada De Retiros]============\n";
+    echo "\n=========[Info General De Retiros]==============\n";
     echo "Numero total de retiros: {$numTotalRetiro} veces\n";
     echo "Valor total retirado: {$valorTotalRetirado} USD\n";
     echo "\n================================================\n";
 }
 //---------------------------------------------------------------------------
-function mostrarInfoGeneralTransferencias($listaTransferencias){
-    echo "\n=========[Info General De Transferencias]============\n";
+function mostrarInfoDetalladaTransferencias($listaTransferencias,$cuenta_ingr){
+    echo "\n=========[Info Detallada De Transferencias]=========\n";
 
     foreach($listaTransferencias as $transfer){
-        echo "Cuenta origen: " . $transfer["cuenta_origen"] . "\n";
-        echo "Cuenta destino: " . $transfer["cuenta_destino"] . "\n";
-        echo "Valor transferido: " . $transfer["valor_transferido"] . " USD\n";
-        echo "Fecha de la transferencia: " . $transfer["fecha_transferencia"] . "\n";
-        echo "\n=============================================================\n";
+        if($transfer["cuenta_origen"] == $cuenta_ingr){
+            echo "Cuenta origen: " . $transfer["cuenta_origen"] . "\n";
+            echo "Cuenta destino: " . $transfer["cuenta_destino"] . "\n";
+            echo "Valor transferido: " . $transfer["valor_transferido"] . " USD\n";
+            echo "Fecha de la transferencia: " . $transfer["fecha_transferencia"] . "\n";
+            echo "\n====================================================\n";
+        }
     }
 }
 //-----------------------------------------------------------------------------------
-function mostrarInfoDetalladaTransferencia($listaTransferencias){
+function mostrarInfoGeneralTransferencias($listaTransferencias,$cuenta_ingr){
     $numTotalTransferencias = 0;
     $valorTotalTransferido = 0;
 
     foreach($listaTransferencias as $transfer){
-        $numTotalTransferencias++;
-        $valorTotalTransferido += $transfer["valor_transferido"];
+        if($transfer["cuenta_origen"] == $cuenta_ingr){
+            $numTotalTransferencias++;
+            $valorTotalTransferido += $transfer["valor_transferido"];
+        }
     }
     echo "\n=========[Info Detallada De Transferencias]============\n";
     echo "Numero total de transferencias: {$numTotalTransferencias} veces\n";
     echo "Valor total tranferido: {$valorTotalTransferido} USD\n";
     echo "\n========================================================\n";
 }
+
+function Bienvenido(){
+echo "=================================\n";
+echo "     BIENVENIDO A BANCO_ADSO\n";
+echo "=================================\n";
+}
+
+function despedida(){
+echo "=================================\n";
+echo "         ¡VUELVA PRONTO!         \n";
+echo "=================================\n";
+}
 //----------------[FIN Funciones]-----------------------
-
-//----------------[   INICIO    ]-----------------------
-$encontrado = 0;
-$intentos = 0;
-//----------------[   Validacion de numero de cuenta  ]-----------------------
-do {
-    if($encontrado == 0 && $intentos != 0){
-        echo "Cuenta no encontrada\n";
-    }
-
-    $cuenta_ingr = readline("Ingrese su cuenta: ");
-    $encontrado = verificarExistenciaCuenta($cuenta_ingr,$clientes);
-    $intentos++;
-} while ($encontrado == 0);
-//----------------[   Validacion de password   ]-----------------------
-$intentosPass = 0;
-$estado = false;
-
-do{
-    
-    if($intentosPass != 0 && !$estado){
-        echo "Password incorrecta, Llevas {$intentosPass} intentos\n";
-    }
-
-    $password_ingr = readline("Ingrese password:");
-    $estado = verificarPassword($cuenta_ingr,$password_ingr,$clientes);
-    $intentosPass++;
-    echo "\n";
-
-}while(!$estado);
-//----------------[   MOSTRAR MENÚ    ]-----------------------
-echo "Bienvenido " . obtenerNombrePorCuenta($cuenta_ingr,$clientes) . "\n";
-mostrarOpciones();
-
+$estadoLogin = false;
+Bienvenido();
 do{  
+
+    if(!$estadoLogin){
+        //----------------[   INICIO    ]-----------------------
+        $encontradoInicio = 0;
+        $intentosInicio = 0;
+        //----------------[   Validacion de numero de cuenta  ]-----------------------
+        do {
+
+            if($encontradoInicio == 0 && $intentosInicio != 0){
+                echo "========================\n";
+                echo "  Cuenta no encontrada\n"; 
+                echo "========================\n";   
+            }
+                
+            $cuenta_ingr = readline("Ingrese su cuenta: ");
+            $encontradoInicio = verificarExistenciaCuenta($cuenta_ingr,$clientes);
+            $intentosInicio++;
+        } while ($encontradoInicio == 0);
+        //----------------[   Validacion de password   ]-----------------------
+        $intentosPass1 = 0;
+        $estadoPass1 = false;
+
+        do{
+                
+            if($intentosPass1 != 0 && !$estadoPass1){
+                echo "Password incorrecta, Llevas {$intentosPass1} intentos\n";
+            }
+
+            $password_ingr = readline("Ingrese password:");
+            $estadoPass1 = verificarPassword($cuenta_ingr,$password_ingr,$clientes);
+            $intentosPass1++;
+            
+
+        }while(!$estadoPass1);
+    
+        //----------------[   MOSTRAR MENÚ    ]-----------------------
+        echo "\n===========================\n";
+        echo "Bienvenido " . obtenerNombrePorCuenta($cuenta_ingr,$clientes) . "\n";
+        echo "===========================\n";
+    }
+    $estadoLogin = true;
     $intentos_menu = 0;
     do{
+        mostrarOpciones();
         if($intentos_menu != 0){
             echo "Error, opcion escogida invalido\n";
         }
-        echo "================================\n";
         $opcion_escogida = readline("ingrese el numero de su opcion: ");
-        echo "================================\n";
+        echo "\n";
         $intentos_menu++;
-    }while($opcion_escogida <= 0 || $opcion_escogida >= 7);
-//--------------------------------[   Inicio de opciones - Casos   ]-----------------------
+    }while($opcion_escogida <= 0 || $opcion_escogida >= 8);
+    //--------------------------------[   Inicio de opciones - Casos   ]-----------------------
     switch ($opcion_escogida) {
-//--------------------------------[Caso 1: Consultar saldo]------------------------------------
+    //--------------------------------[Caso 1: Consultar saldo]------------------------------------
         case 1:
-            echo "elegiste la opcion 1\n";
                 consultarSaldo($cuenta_ingr,$clientes);
             break;
 //--------------------------------[Caso 2: Hacer retiro]------------------------------------  
         case 2:
-            echo "elegiste la opcion 2, debes volver a ingresar tu password\n";
+            echo "Debes volver a ingresar tu password\n";
 //-------------------------------[Validando la password otra vez, es retiro]------------------
             $intentosPass = 0;
             $estado = false;
@@ -270,12 +306,7 @@ do{
                 
                 do{
                     $monto_retiro = readline("Ingrese el monto a retirar: ");
-
-                    if(!is_numeric($monto_retiro)){
-                        echo "\nNo se permiten caracteres, ingrese un monto superior a 0\n";
-                        $estado_retiro = false;
-                    }else{
-                        $estado_retiro = realizarRetiro($cuenta_ingr,$clientes,$monto_retiro);
+                    $estado_retiro = realizarRetiro($cuenta_ingr,$clientes,$monto_retiro);
                         if($monto_retiro <= 0){
                             $saldo_negativo = true;
                             echo "\nMonto no valido, ingrese un monto superior a 0\n";
@@ -288,33 +319,38 @@ do{
                             }else{
 				                $sin_saldo = false;
                                 echo "Retiro exitoso\n";
-                                $retiro = ["usuario"=>obtenerNombrePorCuenta($cuenta_ingr,$clientes),
+                                $retiro = ["usuario"=>$cuenta_ingr,
                                 "valor_retirado"=>$monto_retiro,
                                 "fecha_retiro"=>date("d/m/Y H:i:s")];
 
                                 $retiros[] = $retiro;
                             }
                         }
-                    }
-
-                    
                 }while((!$estado_retiro && !$sin_saldo)||$saldo_negativo);
             }
             break;
 //--------------------------------[Caso 3: Consultar info de retiros]------------------------------------        
         case 3:
-            echo "elegiste la opcion 3\n";
-            $cantidadRetiros = count($retiros);
+            //echo "elegiste la opcion 3\n";
+            $cantidadRetiros = 0;
+
+            foreach($retiros as $retiro){
+                if($retiro["usuario"] == $cuenta_ingr){
+                    $cantidadRetiros++;
+                }
+            }
+
             if($cantidadRetiros == 0){
-                echo "No haz realizado retiros aun\n";
-                echo "============================\n";
+                echo "==============================\n";
+                echo " No haz realizado retiros aun\n";
+                echo "==============================\n";
             }else{
-                mostrarInfoGeneralRetiro($retiros);
+                mostrarInfoGeneralRetiro($retiros,$cuenta_ingr);
                 $eleccion_correcta = false;
                 do{
                     $eleccion_info = readline("¿Quieres ver info mas detallada de los retiros(S para si o N para no)?: ");
                     if($eleccion_info == "S"){
-                        mostrarInfoDetalladaRetiro($retiros);
+                        mostrarInfoDetalladaRetiro($retiros, $cuenta_ingr);
                         $eleccion_correcta = true;
                     }elseif($eleccion_info == "N") {
                         $eleccion_correcta = true;
@@ -328,7 +364,7 @@ do{
 //--------------------------------[Caso 4: Hacer transferencias]------------------------------------  
         case 4:
             echo "elegiste la opcion 4\n";
-            echo "Nota: Prueba con cuenta 234, tiene 2000 USD y se imprime al final\n";
+            
             $encontrado = 0;
             $intentos = 0;
             //----------------[   Validacion existencia de numero de cuenta a transferir  ]-----------------------
@@ -352,7 +388,7 @@ do{
             
             do{
                 if($intentosPass != 0 && !$estado){
-                    echo "Password incorrecta, Llevas {$intentosPass} intentos\n";
+                    echo "\nPassword incorrecta, Llevas {$intentosPass} intentos\n";
                 }
 
                 $password_ingr = readline("Ingrese password:");
@@ -372,12 +408,8 @@ do{
                 echo "No hay saldo en la cuenta\n";
             }else{
                 do{
-                    $monto_transfer = readline("Ingrese el monto a transferir: ");  
-                    if(!is_numeric($monto_transfer)){
-                        echo "\nNo se permiten caracteres, ingrese un monto superior a 0\n";
-                        $estado_transfer = false;
-                    }else{
-                        $estado_transfer = realizarTransferencia($cuenta_ingr,$clientes,$monto_transfer,$cuenta_transfer);
+                    $monto_transfer = readline("Ingrese el monto a transferir: ");            
+                    $estado_transfer = realizarTransferencia($cuenta_ingr,$clientes,$monto_transfer,$cuenta_transfer);
                         if($monto_transfer <= 0){
                             $saldo_negativo = true;
                             echo "\nMonto no valido, ingrese un monto superior a 0\n";
@@ -390,7 +422,7 @@ do{
                             }else{
 				                $sin_saldo = false;
                                 echo "transferencia exitosa\n";
-                                //imprimir la prueba
+                                /*//imprimir la prueba
                                 foreach($clientes as $ci){
                                     if($ci["numCuenta"]==$cuenta_transfer){
                                         echo "=========================================\n";
@@ -398,7 +430,7 @@ do{
                                         echo "=========================================\n";
                                         
                                     }
-                                }
+                                }*/
                                 $transferencia = ["cuenta_origen"=>$cuenta_ingr,
                                                   "cuenta_destino"=>$cuenta_transfer,
                                                   "valor_transferido"=>$monto_transfer,
@@ -406,25 +438,30 @@ do{
                                 $transferencias[] = $transferencia;
                             }
                         }
-                    }      
-                        
                 }while((!$estado_transfer && !$sin_saldo)||$saldo_negativo);
             }
             break;
 //--------------------------------[Caso 5: Consultar info de transferencias]------------------------------------  
         case 5:
-            echo "elegiste la opcion 5\n";
-            $cantidadTransferencias = count($transferencias);
+            //echo "elegiste la opcion 5";
+            $cantidadTransferencias = 0;
+            foreach($transferencias as $transfer){
+                if($transfer["cuenta_origen"] == $cuenta_ingr){
+                    $cantidadTransferencias++;
+                }
+            }
+
             if($cantidadTransferencias == 0){
-                echo "No haz realizado transferencias aun\n";
-                echo "===================================\n";
+                echo "=====================================\n";
+                echo " No haz realizado transferencias aun\n";
+                echo "=====================================\n";
             }else{
-                mostrarInfoGeneralTransferencias($transferencias);
-                $eleccion_correcta = false;
+                mostrarInfoGeneralTransferencias($transferencias,$cuenta_ingr);
+                $eleccion_correcta = false; 
                 do{
                     $eleccion_info = readline("¿Quieres ver info mas detallada de las transferencias(S para si o N para no)?:   ");
                     if($eleccion_info == "S"){
-                        mostrarInfoDetalladaTransferencia($transferencias);
+                        mostrarInfoDetalladaTransferencias($transferencias,$cuenta_ingr);
                         $eleccion_correcta = true;
                     }elseif($eleccion_info == "N") {
                         $eleccion_correcta = true;
@@ -435,15 +472,40 @@ do{
                 }while(!$eleccion_correcta);
             }
             break;
-//--------------------------------[Caso default - salida]------------------------------------  
-        default:
-            if($opcion_escogida != 6){
-                echo "Error, opcion escogida invalido\n";
+
+        //--------------------------------[Caso 6 - cerrar sesion]------------------------------------
+        case 6:
+            $encontradoInicio = 0;
+            $intentosInicio = 0;
+            $estadoLogin = false;
+            echo "==========================\n";
+            echo "      Sesion cerrada\n";
+            echo "==========================\n\n";
+            
+            $intentos_menu_salida = 0;
+            do{
+                mostrarOpcionesSalida();
+                if($intentos_menu_salida != 0){
+                    echo "Error, opcion escogida invalido\n";
+                }
+                $opcion_escogida_salida = readline("ingrese el numero de su opcion: ");
+                echo "\n";
+                $intentos_menu_salida++;
+            }while($opcion_escogida_salida <= 0 || $opcion_escogida_salida >= 3);
+            if($opcion_escogida_salida == 2){
+                $opcion_escogida = 7;
+                $encontradoInicio = -1;
+                despedida();
             }else{
-                echo "Hasta pronto";
+                Bienvenido();
             }
             break;
+        //--------------------------------[Caso default - salida]------------------------------------  
+        default:
+            $encontradoInicio = -1;
+            despedida();
+            break;
     }
-}while($opcion_escogida !=6);
+}while($opcion_escogida !=7 && $encontradoInicio !=-1);
 
 ?>
